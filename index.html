@@ -1,0 +1,393 @@
+<html><head><base href="https://international-global-menu-planner.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLANIFICADOR DE MENÚ GLOBAL DE COCINA INTERNACIONAL</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        background-color: #141414;
+        color: #FFFFFF;
+        margin: 0;
+        padding: 0;
+    }
+    .header {
+        background-image: url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1332&q=80');
+        background-size: cover;
+        background-position: center;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+    .header-content {
+        position: relative;
+        z-index: 2;
+        padding: 0 20px;
+    }
+    .header h1 {
+        font-size: 3.5em;
+        margin: 0 0 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        color: #FFA07A;
+    }
+    .header h2 {
+        font-size: 1.8em;
+        margin: 10px 0 0;
+        font-weight: 300;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    .week-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .day {
+        margin-bottom: 30px;
+    }
+    .day h3 {
+        font-size: 2em;
+        margin-bottom: 15px;
+        color: #FFA07A;
+    }
+    .meal {
+        margin-bottom: 20px;
+    }
+    .meal h4 {
+        font-size: 1.6em;
+        margin-bottom: 10px;
+        color: #F5F5F5;
+    }
+    .carousel {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px 0;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+    .dish {
+        flex: 0 0 calc(16.666% - 20px);
+        margin-right: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        scroll-snap-align: start;
+        background-color: #1F1F1F;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .dish:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(255, 160, 122, 0.2);
+    }
+    .dish img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 15px;
+    }
+    .dish p {
+        margin: 10px 0;
+        font-size: 1em;
+        font-weight: 500;
+        color: #FFFFFF;
+    }
+    .dish.selected {
+        border: 2px solid #FFA07A;
+        box-shadow: 0 0 10px rgba(255, 160, 122, 0.5);
+    }
+    .portions-selector {
+        margin: 20px 0;
+        text-align: center;
+    }
+    .portions-selector select {
+        padding: 10px 20px;
+        font-size: 1em;
+        background-color: #333;
+        color: #FFF;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .portions-selector select:hover {
+        background-color: #444;
+    }
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+    }
+    .buttons button {
+        padding: 15px 30px;
+        font-size: 1em;
+        background-color: #FFA07A;
+        color: #FFF;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .buttons button:hover {
+        background-color: #FF8C61;
+        transform: translateY(-2px);
+    }
+    @media (max-width: 1200px) {
+        .dish {
+            flex: 0 0 calc(25% - 20px);
+        }
+    }
+    @media (max-width: 768px) {
+        .header {
+            height: 300px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+        }
+        .header h2 {
+            font-size: 1.4em;
+        }
+        .dish {
+            flex: 0 0 calc(33.333% - 20px);
+        }
+        .buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+    @media (max-width: 480px) {
+        .dish {
+            flex: 0 0 calc(50% - 20px);
+        }
+    }
+</style>
+</head>
+<body>
+<header class="header">
+    <div class="header-content">
+        <h1>PLANIFICADOR DE MENÚ GLOBAL DE COCINA INTERNACIONAL</h1>
+        <h2>Explora sabores de todo el mundo en tus comidas semanales</h2>
+    </div>
+</header>
+<main class="week-container">
+    <div class="portions-selector">
+        <label for="portions">Porciones: </label>
+        <select id="portions">
+            <option value="2">2 personas</option>
+            <option value="4">4 personas</option>
+            <option value="6">6 personas</option>
+        </select>
+    </div>
+    <div id="weekPlan"></div>
+</main>
+<div class="buttons">
+    <button id="downloadMenu">Descargar Menú</button>
+    <button id="downloadGroceries">Descargar Lista de Compras</button>
+    <button id="downloadInstructions">Descargar Instrucciones</button>
+</div>
+<script>
+    const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const mealTypes = ['Desayuno', 'Almuerzo', 'Cena'];
+    const dishes = {
+        desayuno: [
+            { name: 'Croissants Franceses', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1026&q=80', recipe: '1. Precalentar el horno a 190°C. 2. Desenrollar la masa de croissant pre-hecha. 3. Enrollar cada triángulo desde el lado ancho hasta la punta. 4. Colocar en una bandeja de hornear y pincelar con huevo batido. 5. Hornear durante 10-12 minutos hasta que estén dorados.', groceries: ['Masa de croissant pre-hecha', 'Huevo', 'Mantequilla (opcional)', 'Mermelada (opcional)'] },
+            { name: 'Desayuno Inglés Completo', image: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80', recipe: '1. Freír el tocino hasta que esté crujiente. 2. Cocinar las salchichas. 3. Freír los huevos. 4. Asar los tomates y champiñones. 5. Calentar los frijoles horneados. 6. Tostar el pan. 7. Servir todos los componentes juntos.', groceries: ['Tocino', 'Salchichas', 'Huevos', 'Tomates', 'Champiñones', 'Frijoles horneados', 'Pan'] },
+            { name: 'Sopa de Miso Japonesa', image: 'https://images.pexels.com/photos/24604624/pexels-photo-24604624/free-photo-of-restaurante-vaso-cristal-vidrio.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500', recipe: '1. Hervir agua en una olla. 2. Agregar gránulos de dashi y disolver. 3. Añadir tofu en cubos y algas wakame. 4. Cocinar a fuego lento durante 2 minutos. 5. Apagar el fuego y agregar la pasta de miso. 6. Servir caliente.', groceries: ['Gránulos de dashi', 'Tofu', 'Algas wakame', 'Pasta de miso', 'Cebollín (opcional)'] },
+            { name: 'Huevos Rancheros Mexicanos', image: 'https://images.unsplash.com/photo-1525184648845-66cbe3b6c59c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', recipe: '1. Freír las tortillas de maíz hasta que estén crujientes. 2. Freír los huevos estrellados. 3. Calentar los frijoles refritos. 4. Colocar las tortillas en platos, cubrir con frijoles y huevos. 5. Verter salsa caliente sobre los huevos. 6. Decorar con cilantro y servir.', groceries: ['Tortillas de maíz', 'Huevos', 'Frijoles refritos', 'Salsa', 'Cilantro'] },
+            { name: 'Yogur Griego con Miel', image: 'https://images.unsplash.com/photo-1505253468034-514d2507d914?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', recipe: '1. Servir el yogur griego en tazones. 2. Rociar con miel. 3. Agregar una variedad de frutos secos picados. 4. Espolvorear con canela. 5. Añadir frutas frescas si se desea.', groceries: ['Yogur griego', 'Miel', 'Frutos secos variados', 'Canela', 'Frutas frescas (opcional)'] },
+            { name: 'Dosa Masala India', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80', recipe: '1. Preparar la masa de dosa. 2. Calentar una plancha y extender la masa finamente. 3. Cocinar hasta que esté dorada y crujiente. 4. Rellenar con una mezcla de patatas especiadas. 5. Doblar y servir con chutney y sambar.', groceries: ['Masa de dosa', 'Patatas', 'Cebollas', 'Semillas de mostaza', 'Cúrcuma', 'Chutney de coco', 'Sambar'] }
+        ],
+        almuerzo: [
+            { name: 'Ensalada Caprese Italiana', image: 'https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', recipe: '1. Cortar la mozzarella fresca y los tomates en rodajas. 2. Disponer alternando las rodajas en un plato. 3. Colocar hojas de albahaca fresca entre las rodajas. 4. Rociar con aceite de oliva y glaseado balsámico. 5. Sazonar con sal y pimienta.', groceries: ['Mozzarella fresca', 'Tomates', 'Albahaca fresca', 'Aceite de oliva', 'Glaseado balsámico', 'Sal', 'Pimienta'] },
+            { name: 'Curry Verde Tailandés', image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80', recipe: '1. Saltear la pasta de curry verde en aceite de coco. 2. Agregar leche de coco y llevar a ebullición. 3. Añadir pollo y verduras. 4. Cocinar hasta que el pollo esté hecho y las verduras estén tiernas. 5. Incorporar salsa de pescado y azúcar. 6. Servir con arroz.', groceries: ['Pasta de curry verde', 'Leche de coco', 'Pollo', 'Verduras variadas', 'Salsa de pescado', 'Azúcar', 'Arroz'] },
+            { name: 'Paella Española', image: 'https://images.unsplash.com/photo-1515443961218-a51367888e4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80', recipe: '1. Saltear cebollas y ajo en aceite de oliva. 2. Agregar arroz y azafrán, revolver para cubrir. 3. Añadir caldo y cocinar a fuego lento. 4. Agregar mariscos y verduras. 5. Cocinar hasta que el arroz esté tierno y el líquido se haya absorbido. 6. Dejar reposar antes de servir.', groceries: ['Arroz para paella', 'Azafrán', 'Mezcla de mariscos', 'Pimientos', 'Guisantes', 'Caldo de pollo', 'Limón'] },
+            { name: 'Kebabs Turcos', image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80', recipe: '1. Mezclar carne de cordero molida con especias. 2. Formar en formas oblongas en brochetas. 3. Asar a la parrilla hasta que estén bien cocidos. 4. Servir con pan pita, salsa de yogur y ensalada.', groceries: ['Carne de cordero molida', 'Comino', 'Pimentón', 'Ajo', 'Pan pita', 'Yogur', 'Pepino', 'Tomates', 'Lechuga'] },
+            { name: 'Pho Vietnamita', image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80', recipe: '1. Preparar caldo de res con especias. 2. Cocinar fideos de arroz. 3. Cortar carne de res muy fina. 4. Armar los tazones con fideos y carne. 5. Verter el caldo caliente encima. 6. Servir con brotes de soja, hierbas y lima.', groceries: ['Huesos de res', 'Fideos de arroz', 'Solomillo de res', 'Brotes de soja', 'Albahaca tailandesa', 'Lima', 'Salsa hoisin', 'Sriracha'] },
+            { name: 'Tagine Marroquí', image: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80', recipe: '1. Dorar trozos de pollo en aceite. 2. Agregar cebollas, ajo y especias. 3. Añadir verduras y albaricoques. 4. Verter caldo y cocinar a fuego lento hasta que el pollo esté cocido. 5. Decorar con almendras y servir con cuscús.', groceries: ['Pollo', 'Cebollas', 'Ajo', 'Zanahorias', 'Calabacín', 'Albaricoques secos', 'Caldo de pollo', 'Almendras', 'Cuscús'] }
+        ],
+        cena: [
+            { name: 'Rollos de Sushi Japonés', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', recipe: '1. Preparar arroz para sushi. 2. Colocar una hoja de nori sobre una esterilla de bambú. 3. Extender arroz sobre el nori. 4. Agregar rellenos como pepino, aguacate y pescado. 5. Enrollar firmemente usando la esterilla. 6. Cortar y servir con salsa de soja y wasabi.', groceries: ['Arroz para sushi', 'Hojas de nori', 'Pepino', 'Aguacate', 'Pescado grado sashimi', 'Salsa de soja', 'Wasabi', 'Jengibre encurtido'] },
+            { name: 'Pollo a la Mantequilla Indio', image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', recipe: '1. Marinar el pollo en yogur y especias. 2. Asar o freír el pollo en sartén. 3. Preparar la salsa con tomates, crema y especias. 4. Agregar el pollo cocido a la salsa. 5. Cocinar a fuego lento hasta que esté bien caliente. 6. Servir con pan naan y arroz.', groceries: ['Pollo', 'Yogur', 'Garam masala', 'Tomates', 'Crema', 'Mantequilla', 'Pan naan', 'Arroz basmati'] },
+            { name: 'Moussaka Griega', image: 'https://images.unsplash.com/photo-1447078806655-40579c2520d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', recipe: '1. Cortar y asar las berenjenas. 2. Preparar salsa de carne con cordero molido. 3. Hacer salsa bechamel. 4. En una fuente para horno, alternar capas de berenjena, salsa de carne y bechamel. 5. Hornear hasta que esté dorado y burbujeante.', groceries: ['Berenjenas', 'Carne de cordero molida', 'Tomates', 'Cebollas', 'Leche', 'Harina', 'Mantequilla', 'Queso parmesano'] },
+            { name: 'Enchiladas Mexicanas', image: 'https://images.unsplash.com/photo-1534352956036-cd81e27dd615?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', recipe: '1. Preparar salsa para enchiladas. 2. Cocinar y desmenuzar el pollo. 3. Sumergir las tortillas en la salsa. 4. Rellenar con pollo y queso. 5. Enrollar y colocar en una fuente para horno. 6. Cubrir con el resto de la salsa y queso. 7. Hornear hasta que el queso se derrita.', groceries: ['Tortillas de maíz', 'Pollo', 'Salsa para enchiladas', 'Queso', 'Cebollas', 'Cilantro', 'Crema agria'] },
+            { name: 'Coq au Vin Francés', image: 'https://images.unsplash.com/photo-1600891963935-9e9544daf776?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', recipe: '1. Dorar trozos de pollo en aceite. 2. Agregar tocino, champiñones y cebollas perla. 3. Verter vino tinto y caldo de pollo. 4. Cocinar a fuego lento hasta que el pollo esté bien cocido. 5. Espesar la salsa si es necesario. 6. Servir con pan crujiente.', groceries: ['Pollo', 'Tocino', 'Champiñones', 'Cebollas perla', 'Vino tinto', 'Caldo de pollo', 'Tomillo', 'Pan crujiente'] },
+            { name: 'Dim Sum Chino', image: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', recipe: '1. Preparar varios rellenos (cerdo, camarones, verduras). 2. Envolver los rellenos en masa para dumplings. 3. Cocinar los dumplings al vapor hasta que estén hechos. 4. Preparar salsas para mojar. 5. Servir caliente con las salsas.', groceries: ['Masa para dumplings', 'Carne de cerdo molida', 'Camarones', 'Repollo', 'Jengibre', 'Ajo', 'Salsa de soja', 'Vinagre de arroz'] }
+        ]
+    };
+
+    function generateWeekPlan() {
+        const weekPlan = document.getElementById('weekPlan');
+        weekPlan.innerHTML = '';
+
+        weekDays.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.classList.add('day');
+            dayElement.innerHTML = `<h3>${day}</h3>`;
+
+            mealTypes.forEach(meal => {
+                const mealElement = document.createElement('div');
+                mealElement.classList.add('meal');
+                mealElement.innerHTML = `<h4>${meal}</h4>`;
+
+                const carousel = document.createElement('div');
+                carousel.classList.add('carousel');
+
+                dishes[meal.toLowerCase()].forEach(dish => {
+                    const dishElement = document.createElement('div');
+                    dishElement.classList.add('dish');
+                    dishElement.innerHTML = `
+                        <img src="${dish.image}" alt="${dish.name}">
+                        <p>${dish.name}</p>
+                    `;
+                    dishElement.addEventListener('click', () => {
+                        const selected = carousel.querySelector('.selected');
+                        if (selected) selected.classList.remove('selected');
+                        dishElement.classList.add('selected');
+                    });
+                    carousel.appendChild(dishElement);
+                });
+
+                mealElement.appendChild(carousel);
+                dayElement.appendChild(mealElement);
+            });
+
+            weekPlan.appendChild(dayElement);
+        });
+    }
+
+    generateWeekPlan();
+
+    document.getElementById('downloadMenu').addEventListener('click', () => {
+        const doc = new jspdf.jsPDF();
+        let yOffset = 10;
+
+        doc.setFontSize(20);
+        doc.text('Plan de Menú de Cocina Internacional', 105, yOffset, { align: 'center' });
+        yOffset += 10;
+
+        weekDays.forEach(day => {
+            yOffset += 10;
+            doc.setFontSize(16);
+            doc.text(day, 10, yOffset);
+            yOffset += 10;
+
+            mealTypes.forEach(meal => {
+                const selectedDish = document.querySelector(`.day:nth-child(${weekDays.indexOf(day) + 1}) .meal:nth-child(${mealTypes.indexOf(meal) + 2}) .selected p`);
+                if (selectedDish) {
+                    doc.setFontSize(12);
+                    doc.text(`${meal}: ${selectedDish.textContent}`, 20, yOffset);
+                    yOffset += 7;
+                }
+            });
+
+            if (yOffset > 270) {
+                doc.addPage();
+                yOffset = 10;
+            }
+        });
+
+        doc.save('menu_internacional.pdf');
+    });
+
+    document.getElementById('downloadGroceries').addEventListener('click', () => {
+        const doc = new jspdf.jsPDF();
+        let yOffset = 10;
+
+        doc.setFontSize(20);
+        doc.text('Lista de Compras', 105, yOffset, { align: 'center' });
+        yOffset += 10;
+
+        const groceryList = new Set();
+
+        weekDays.forEach(day => {
+            mealTypes.forEach(meal => {
+                const selectedDish = document.querySelector(`.day:nth-child(${weekDays.indexOf(day) + 1}) .meal:nth-child(${mealTypes.indexOf(meal) + 2}) .selected p`);
+                if (selectedDish) {
+                    const dishName = selectedDish.textContent;
+                    const dish = dishes[meal.toLowerCase()].find(d => d.name === dishName);
+                    if (dish && dish.groceries) {
+                        dish.groceries.forEach(item => groceryList.add(item));
+                    }
+                }
+            });
+        });
+
+        const groceries = Array.from(groceryList);
+        groceries.sort();
+
+        groceries.forEach(item => {
+            doc.setFontSize(12);
+            doc.text(`• ${item}`, 20, yOffset);
+            yOffset += 7;
+
+            if (yOffset > 270) {
+                doc.addPage();
+                yOffset = 10;
+            }
+        });
+
+        doc.save('lista_de_compras.pdf');
+    });
+
+    document.getElementById('downloadInstructions').addEventListener('click', () => {
+        const doc = new jspdf.jsPDF();
+        let yOffset = 10;
+
+        doc.setFontSize(20);
+        doc.text('Instrucciones de Preparación', 105, yOffset, { align: 'center' });
+        yOffset += 10;
+
+        weekDays.forEach(day => {
+            yOffset += 10;
+            doc.setFontSize(16);
+            doc.text(day, 10, yOffset);
+            yOffset += 10;
+
+            mealTypes.forEach(meal => {
+                const selectedDish = document.querySelector(`.day:nth-child(${weekDays.indexOf(day) + 1}) .meal:nth-child(${mealTypes.indexOf(meal) + 2}) .selected p`);
+                if (selectedDish) {
+                    const dishName = selectedDish.textContent;
+                    const dish = dishes[meal.toLowerCase()].find(d => d.name === dishName);
+                    if (dish && dish.recipe) {
+                        doc.setFontSize(14);
+                        doc.text(`${meal}: ${dishName}`, 20, yOffset);
+                        yOffset += 7;
+                        doc.setFontSize(12);
+                        const recipeLines = doc.splitTextToSize(dish.recipe, 170);
+                        recipeLines.forEach(line => {
+                            doc.text(line, 30, yOffset);
+                            yOffset += 5;
+                        });
+                        yOffset += 5;
+                    }
+                }
+
+                if (yOffset > 270) {
+                    doc.addPage();
+                    yOffset = 10;
+                }
+            });
+        });
+
+        doc.save('instrucciones_de_preparacion.pdf');
+    });
+</script>
+</body>
+</html>
